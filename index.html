@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Rock Paper Scissors</title>
+  </head>
+
+  <body>
+  </body>
+  <script>
+
+    window.onload = game();
+
+    function game() {
+
+      let rematchChoice = true;
+      let userChoice;
+      let compChoice;
+      let outcome;
+
+      while(rematchChoice === true){
+
+        let score = 0;
+
+        for (let round = 0; round < 5; round++) {
+
+          userChoice = getUserChoice();
+
+          compChoice = getCompChoice();
+
+          outcome = checkResult(userChoice, compChoice);
+
+          score += outcome;
+
+          printRoundResult(outcome, score, compChoice);
+        }
+
+        printFinalResult(score);
+
+        rematchChoice = askForRematch();
+
+      }
+
+
+    }
+
+
+    function getUserChoice() {
+      let userChoice;
+
+      while(userChoice !== "ROCK" && userChoice !== "PAPER" && userChoice !== "SCISSORS"){ // Tests to check validity of user input and re-prompts if invalid
+
+        userChoice = prompt("Rock, Paper or Scissors?"); //Prompt for input
+
+        userChoice = userChoice.toUpperCase(); // Makes case insensitive
+
+        switch(userChoice) { // Returns number representing user choice to make result checking easier (see checkResult function)
+          case "ROCK":
+            console.log("You selected ROCK!");
+            return 0;
+          case "PAPER":
+            console.log("You selected PAPER!");
+            return 1;
+          case "SCISSORS":
+            console.log("You selected SCISSORS!"); 
+            return 2;
+          default:
+            console.log("Invalid input, please re-enter choice matching an option.");
+        }
+      }
+
+    }
+
+
+    function getCompChoice() {
+      return Math.floor(Math.random() * 3); // Assigns a random number between 0 (inclusive) and 2 (inclusive) each of which count for one possible selection
+    }
+
+    function checkResult(userSelection, compSelection) {
+
+      let result = compSelection - userSelection; // Prepares variable to test for result
+
+      if (result === 0) { // Checks for draw
+        return 0;
+      } else if (result === -1 || result == 2) { // Checks for user win.
+        return 1;
+      } else { // Only other option is user lost
+        return -1;
+  }
+
+}
+
+    function printRoundResult(roundOutcome, currentScore, compSelection) { // Function to print round result with custom text
+
+      let outcomeString = (roundOutcome === 1) ? `won this round, a point has been added to your score`:(roundOutcome === 0) ? `drew this round, your score remains the same`:`lost this round, a point has been deducted from your score`;
+      let compString = (compSelection === 0) ? `rock`:(compSelection === 1) ? `paper`:`scissors`; // Converts computer choice to string for printing
+
+      console.log(`The computer selected ${ compString }. You ${ outcomeString }! The current score is ${ currentScore}`); //Prints round outcome with variables inserted
+    }
+
+
+    function printFinalResult(finalScore) { // Function to print final score
+
+      if (finalScore > 0){ // Checks if number is positive, if so user has won
+        console.log(`Congratulations, you won! You managed to beat the computer with a final score of ${ finalScore }.`);
+      }
+      else { // Otherwise user has lost
+        console.log(`Oh no! You lost! Your final score was ${ finalScore }.`);
+      }
+      
+    }
+
+
+    function askForRematch() { // Function runs after printing final score. Asks for rematch
+
+      let rematch;
+
+      while(rematch !== "Y" && rematch !== "N") { // Checks for player input and loops/re-prompts if invalid
+        rematch = prompt("Do you want to play another game? Y/N");
+        rematch = rematch.toUpperCase(); // Makes choice case insensitive
+      }
+
+      if (rematch === "Y") { // Returns true if player wants to replay. False if not.
+        return true;
+      }
+      else {
+        return false;
+      }
+        
+    }
+
+
+
+
+  </script>
+
+</html>
