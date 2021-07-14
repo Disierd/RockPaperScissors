@@ -13,30 +13,39 @@
     <div class="grid-container">
       <div class="grid-item">
         <img src="" class="option">
-        <button>ROCK</button>
+        <button class="option" id="rock">ROCK</button>
       </div>
       <div class="grid-item">
         <img src="" class="option">
-        <button>PAPER</button>
+        <button class="option" id="paper">PAPER</button>
       </div>
       <div class="grid-item">
         <img src="" class="option">
-        <button>SCISSORS</button>
+        <button class="option" id="scissors">SCISSORS</button>
       </div>
     </div>
-    <div>
+    <div id="resultBox">
       <h3>CHOOSE YOUR OPTION TO START THE GAME</h3>
+      <p id="resultContent"></p>
     </div>
     <div class="grid-container">
+      <div class="grid-item">
 
+      </div>
+      <div class="grid-item">
+
+      </div>
     </div>
-
   </body>
   <script>
 
-    window.onload = game();
+    let options = document.querySelectorAll(".option");
+    let resultBox = document.querySelector("#resultBox");
+    let resultContent = document.querySelector("#resultContent");
 
-    function game() { // Main game function that calls all other functions
+    options.forEach(option => option.addEventListener("click", game));
+
+    function game(e) { // Main game function that calls all other functions
 
       let runGame = true; 
       let userChoice;
@@ -44,49 +53,39 @@
       let roundResult;
       let score;
 
-      while(runGame === true){ // Loops if the user wants to rematch at the end of a game
+      // while(runGame === true){ // Loops if the user wants to rematch at the end of a game
 
-        score = 0;
+      score = 0;
 
-        for (let round = 0; round < 5; round++) { 
+      userChoice = setUserChoice(e.target.getAttribute("id")); 
 
-          userChoice = getUserChoice(); 
+      compChoice = getCompChoice(); 
 
-          compChoice = getCompChoice(); 
+      roundResult = checkResult(userChoice, compChoice); // Function to check result. Arguments are the returned values from userChoice and compChoice. Returns either a -1, 0 or 1 for loss, draw and win.
 
-          roundResult = checkResult(userChoice, compChoice); // Function to check result. Arguments are the returned values from userChoice and compChoice. Returns either a -1, 0 or 1 for loss, draw and win.
+      score += roundResult; 
 
-          score += roundResult; 
+      printRoundResult(roundResult, score, compChoice); 
 
-          printRoundResult(roundResult, score, compChoice); 
-        }
+      // printFinalResult(score); 
 
-        printFinalResult(score); 
+        // runGame = askForRematch(); // Function to ask for a rematch. Returns a boolean that acts as a switch to continue or stop the above while loop.
 
-        runGame = askForRematch(); // Function to ask for a rematch. Returns a boolean that acts as a switch to continue or stop the above while loop.
-
-      }
 
 
     }
 
 
-    function getUserChoice() {
-      let userChoice;
-
-      while(userChoice !== "ROCK" && userChoice !== "PAPER" && userChoice !== "SCISSORS"){ // Tests to check validity of user input and re-prompts if invalid
-        userChoice = prompt("Rock, Paper or Scissors?"); 
-        userChoice = userChoice.toUpperCase(); 
-      }
+    function setUserChoice(userChoice) {
 
       switch(userChoice) { // Returns number representing user choice to make result checking easier (see checkResult function)
-        case "ROCK":
+        case "rock":
           console.log("You selected ROCK!");
           return 0;
-        case "PAPER":
+        case "paper":
           console.log("You selected PAPER!");
           return 1;
-        case "SCISSORS":
+        case "scissors":
           console.log("You selected SCISSORS!"); 
           return 2;
         default:
@@ -121,7 +120,7 @@
       let outcomeString = (roundOutcome === 1) ? `won this round, a point has been added to your score`:(roundOutcome === 0) ? `drew this round, your score remains the same`:`lost this round, a point has been deducted from your score`;
       let compString = (compSelection === 0) ? `rock`:(compSelection === 1) ? `paper`:`scissors`; // Reformats computer choice to string for printing
 
-      console.log(`The computer selected ${ compString }. You ${ outcomeString }! The current score is ${ currentScore }`); //Prints round roundResult with variables inserted
+      resultContent.textContent = `The computer selected ${ compString }. You ${ outcomeString }! The current score is ${ currentScore }`; //Prints round roundResult with variables inserted
     }
 
 
@@ -131,7 +130,7 @@
         console.log(`Congratulations, you won! You managed to beat the computer with a final score of ${ finalScore }.`);
       } 
       else if (finalScore === 0) {
-        console.log(`You and the computer came to a draw. Your final score is ${ finalScore }.`);
+        console.log(`YOu drew with the computer! Your final score is ${ finalScore }.`);
       }
       else { // Otherwise user has lost
         console.log(`Oh no! You lost! Your final score was ${ finalScore }.`);
