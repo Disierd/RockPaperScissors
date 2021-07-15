@@ -1,0 +1,30 @@
+.options-grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.info-grid-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+}
+
+.options-grid-item, .info-grid-item, .title, h3, h1, h2, p, div {
+    text-align: center;
+}
+
+.title-container {
+    width: 100%;
+    border: 3px solid green;
+}
+
+.title h2 {
+    display: inline;
+}
+
+img {
+    display: block;
+    margin: auto;
+    width: 200px;
+    height: 200px;
+}
+

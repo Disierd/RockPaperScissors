@@ -3,94 +3,83 @@
   <head>
     <meta charset="utf-8">
     <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="myStyles.css">
   </head>
 
   <body>
-    <div>
-      <h1 style="title">Welcome to</h1><br>
-      <h2 style="rock title">ROCK, </h2><h2 style="paper title">PAPER, </h2><h2 style="scissors title">SCISSORS</h2>
+    <div class="title-container">
+      <h1 class="title">Welcome to</h1><br>
+      <div class="title"><h2 class="rock">ROCK, </h2><h2 class="paper">PAPER, </h2><h2 class="scissors">SCISSORS</h2></div>
     </div>
-    <div class="grid-container">
-      <div class="grid-item">
-        <img src="" class="option">
-        <button class="option" id="rock">ROCK</button>
+
+    <div class="options-grid-container">
+      <div class="options-grid-item">
+        <img src="rock-icon.png" class="option">
+        <button class="option" id="0">ROCK</button>
       </div>
-      <div class="grid-item">
-        <img src="" class="option">
-        <button class="option" id="paper">PAPER</button>
+      <div class="options-grid-item">
+        <img src="paper-icon.jpg" class="option">
+        <button class="option" id="1">PAPER</button>
       </div>
-      <div class="grid-item">
-        <img src="" class="option">
-        <button class="option" id="scissors">SCISSORS</button>
+      <div class="options-grid-item">
+        <img src="scissors-icon.jpg" class="option">
+        <button class="option" id="2">SCISSORS</button>
       </div>
     </div>
-    <div id="resultBox">
-      <h3>CHOOSE YOUR OPTION TO START THE GAME</h3>
+
+    <div id="instructContainer">
+      <h3 id="gameInstruct">CHOOSE YOUR OPTION TO START THE GAME</h3>
       <p id="resultContent"></p>
     </div>
-    <div class="grid-container">
-      <div class="grid-item">
 
+    <div class="info-grid-container">
+      <div class="info-grid-item">
+        <img src="user-icon.png" class="player">
+        <p class="playerLabel">Your Score</p><br>
+        <p id="humanScore"></p>
       </div>
-      <div class="grid-item">
-
+      <div class="info-grid-item" id="printoutContainer">
+        <p class="playerLabel">Round results</p><br>
+      </div>
+      <div class="info-grid-item">
+        <img src="pc-icon.png" class="player">
+        <p class="playerLabel">PC's Score</p><br>
+        <p id="compScore"></p>
       </div>
     </div>
+
   </body>
   <script>
 
     let options = document.querySelectorAll(".option");
-    let resultBox = document.querySelector("#resultBox");
+    let instructContainer = document.querySelector("#instructContainer")
+    let gameInstruct = document.querySelector("#gameInstruct");
     let resultContent = document.querySelector("#resultContent");
+    let humanScore = document.querySelector("#humanScore");
+    let compScore = document.querySelector("#compScore");
+    let printoutContainer = document.querySelector("#printoutContainer")
+
+    let roundNumber = 1;
+    let scoreArray = [0, 0];
+    let compChoice;
+    let roundResult;
 
     options.forEach(option => option.addEventListener("click", game));
 
     function game(e) { // Main game function that calls all other functions
 
-      let runGame = true; 
-      let userChoice;
-      let compChoice;
-      let roundResult;
-      let score;
-
-      // while(runGame === true){ // Loops if the user wants to rematch at the end of a game
-
-      score = 0;
-
-      userChoice = setUserChoice(e.target.getAttribute("id")); 
+      roundNumber++;
 
       compChoice = getCompChoice(); 
 
-      roundResult = checkResult(userChoice, compChoice); // Function to check result. Arguments are the returned values from userChoice and compChoice. Returns either a -1, 0 or 1 for loss, draw and win.
+      roundResult = checkResult(e.target.getAttribute("id"), compChoice);
 
-      score += roundResult; 
+      printRoundResult(roundResult, compChoice); 
 
-      printRoundResult(roundResult, score, compChoice); 
-
-      // printFinalResult(score); 
-
-        // runGame = askForRematch(); // Function to ask for a rematch. Returns a boolean that acts as a switch to continue or stop the above while loop.
-
-
-
-    }
-
-
-    function setUserChoice(userChoice) {
-
-      switch(userChoice) { // Returns number representing user choice to make result checking easier (see checkResult function)
-        case "rock":
-          console.log("You selected ROCK!");
-          return 0;
-        case "paper":
-          console.log("You selected PAPER!");
-          return 1;
-        case "scissors":
-          console.log("You selected SCISSORS!"); 
-          return 2;
-        default:
-          console.log("Invalid input, please re-enter choice matching an option.");
-        }
+      if (roundNumber > 5) {
+        printFinalResult();
+        rematchInterface();
+      }
 
     }
 
@@ -102,59 +91,84 @@
 
     function checkResult(userSelection, compSelection) {
 
-      let result = compSelection - userSelection; // Prepares variable to test for result
+      let result = compSelection - +userSelection; // Prepares variable to test for result
 
       if (result === 0) { // Checks for draw
-        return 0;
+        return "drew";
       } else if (result === -1 || result === 2) { // Checks for user win.
-        return 1;
+        scoreArray[0]++;
+        return "won";
       } else { // Only other option is user lost
-        return -1;
+        scoreArray[1]++;
+        return "lost";
   }
 
 }
 
 
-    function printRoundResult(roundOutcome, currentScore, compSelection) { // Function to print round result with custom text
+    function printRoundResult(roundOutcome, compSelection) { // Function to print round result with custom text
 
-      let outcomeString = (roundOutcome === 1) ? `won this round, a point has been added to your score`:(roundOutcome === 0) ? `drew this round, your score remains the same`:`lost this round, a point has been deducted from your score`;
       let compString = (compSelection === 0) ? `rock`:(compSelection === 1) ? `paper`:`scissors`; // Reformats computer choice to string for printing
 
-      resultContent.textContent = `The computer selected ${ compString }. You ${ outcomeString }! The current score is ${ currentScore }`; //Prints round roundResult with variables inserted
+      resultContent.textContent = `The computer selected ${ compString }. You ${ roundOutcome } this round!`;
+
+      humanScore.textContent = scoreArray[0];
+      compScore.textContent = scoreArray[1];
+      gameInstruct.textContent = `Current round: ${roundNumber}`;
+
+      let resultPrintout = document.createElement("p");
+      resultPrintout.setAttribute("id", "resultPrintout");
+      resultPrintout.textContent = `You ${roundOutcome} round ${roundNumber -1}`;
+      printoutContainer.appendChild(resultPrintout);
     }
 
 
-    function printFinalResult(finalScore) { // Function to print final score
+    function printFinalResult() { // Function to print final score
 
-      if (finalScore > 0){ // Checks if number is positive, if so user has won
-        console.log(`Congratulations, you won! You managed to beat the computer with a final score of ${ finalScore }.`);
+      if (scoreArray[0] > scoreArray[1]){
+        gameInstruct.textContent = "Congratulations, you won! Would you like a rematch?";
       } 
-      else if (finalScore === 0) {
-        console.log(`YOu drew with the computer! Your final score is ${ finalScore }.`);
+      else if (scoreArray[0] === scoreArray[1]) {
+        gameInstruct.textContent = "You drew with the computer! Would you like a rematch?";
       }
-      else { // Otherwise user has lost
-        console.log(`Oh no! You lost! Your final score was ${ finalScore }.`);
+      else {
+        gameInstruct.textContent = "Oh no! You lost! Would you like a rematch?";
       }
       
     }
 
 
-    function askForRematch() { // Function runs after printing final score. Asks for rematch
+    function rematchInterface() { // Function runs after printing final score. Asks for rematch
 
-      let rematch;
+      
+      options.forEach(option => option.removeEventListener("click", game))
 
-      while(rematch !== "Y" && rematch !== "N") { // Checks for player input and loops/re-prompts if invalid
-        rematch = prompt("Do you want to play another game? Y/N");
-        rematch = rematch.toUpperCase();
-      }
+      let rematchBtn = document.createElement("button");
+      rematchBtn.setAttribute("id", "rematchBtn");
+      rematchBtn.textContent = `REMATCH`;
+      rematchBtn.addEventListener("click", resetInterface);
 
-      if (rematch === "Y") { // Returns true if player wants to replay. False if not.
-        return true;
-      }
-      else {
-        return false;
-      }
-        
+      instructContainer.appendChild(rematchBtn)
+      
+
+      
+
+
+      //  "Do you want to play another game? Y/N";
+    }
+
+    function resetInterface() {
+      options.forEach(option => option.addEventListener("click", game));
+      gameInstruct.textContent = "CHOOSE YOUR OPTION TO START THE GAME";
+      roundNumber = 1;
+      scoreArray = [0, 0];
+      humanScore.textContent = scoreArray[0];
+      compScore.textContent = scoreArray[1];
+      let printoutsToRemove = document.querySelectorAll("#resultPrintout");
+      printoutsToRemove.forEach(printout => printout.remove());
+      this.remove();
+
+
     }
 
   </script>
